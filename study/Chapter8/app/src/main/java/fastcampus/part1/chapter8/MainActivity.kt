@@ -1,10 +1,13 @@
 package fastcampus.part1.chapter8
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -29,11 +32,43 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbar.apply {
+            title = "사진 가져오기"
+            setSupportActionBar(this)
+        }
+
         binding.loadImageButton.setOnClickListener {
             checkPermission()
         }
+        binding.navigateFrameActivityButton.setOnClickListener {
+            navigationToFrameActivity()
+        }
 
         initRecyclerView()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean { // 이것을 통하여 메뉴가 생기게 됨
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.action_add -> {
+                checkPermission()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun navigationToFrameActivity(){
+        val images = imageAdapter.currentList.filterIsInstance<ImageItems.Image>().map { it.uri.toString() }.toTypedArray()
+        val intent = Intent(this, FrameActivity::class.java)
+            .putExtra("images", images)
+        startActivity(intent)
     }
 
     private fun initRecyclerView(){
@@ -53,12 +88,12 @@ class MainActivity : AppCompatActivity() {
         when {
             ContextCompat.checkSelfPermission( // 권한이 있을때
                 this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> { // 권한이 부여 되었는지 확인
                 loadImage() // 사진 이미지 불러오기
             }
             shouldShowRequestPermissionRationale( // 권한이 없을때
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.READ_EXTERNAL_STORAGE
             ) -> {
                 showPermissionInfoDialog() //권한 요청 보여주기
             }
@@ -71,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPermissionInfoDialog() {
         AlertDialog.Builder(this).apply {
-            setMessage("")
+            setMessage("이미지를 가져오기 위해서, 외부 저장소 읽기 권한이 필요합니다.")
             setNegativeButton("취소", null)
             setPositiveButton("동의"){ _, _ ->
                 requestReadExternalStorage()
@@ -86,7 +121,7 @@ class MainActivity : AppCompatActivity() {
     private fun requestReadExternalStorage() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             REQUEST_READ_EXTERNAL_STORAGE
         )
     }
