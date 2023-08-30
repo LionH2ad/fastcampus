@@ -1,11 +1,10 @@
 package fastcampus.part1.chapter7
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import fastcampus.part1.chapter7.databinding.ActivityMainBinding
@@ -15,18 +14,20 @@ class MainActivity : AppCompatActivity() ,WordAdapter.ItemClickListener{
     private lateinit var wordAdapter: WordAdapter
     private var selectedWord: Word? = null
     private val updateAddWordResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){result ->
-        val isUpdated = result.data?.getBooleanExtra("isUpdated",false) ?: false
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val isUpdated = result.data?.getBooleanExtra("isUpdated", false) ?: false
 
-        if(result.resultCode == RESULT_OK && isUpdated){
+        if (result.resultCode == RESULT_OK && isUpdated) {
             updateAddWord()
         }
     }
 
     private val updateEditWordResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){result ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         val editWord = result.data?.getParcelableExtra<Word>("editWord")
-        if(result.resultCode == RESULT_OK && editWord != null){
+        if (result.resultCode == RESULT_OK && editWord != null) {
             updateEditWord(editWord)
         }
     }
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() ,WordAdapter.ItemClickListener{
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initView()
+        initRecyclerView()
 
         binding.addButton.setOnClickListener {
             Intent(this, AddActivity::class.java).let{
@@ -51,10 +52,6 @@ class MainActivity : AppCompatActivity() ,WordAdapter.ItemClickListener{
         }
     }
 
-    private fun initView(){
-        initRecyclerView()
-    }
-
     private fun initRecyclerView(){
         /*val dummyList = mutableListOf(
             Word("weather","날씨","명사"),
@@ -64,10 +61,12 @@ class MainActivity : AppCompatActivity() ,WordAdapter.ItemClickListener{
 
         wordAdapter = WordAdapter(dummyList, this)*/
         wordAdapter = WordAdapter(mutableListOf(), this)
-        binding.WordRecyclerView.apply {
+        binding.wordRecyclerView.apply {
             adapter = wordAdapter
-            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            val dividerItemDecoration = DividerItemDecoration(applicationContext,LinearLayoutManager.VERTICAL)
+            layoutManager =
+                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            val dividerItemDecoration =
+                DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
         }
 
@@ -77,7 +76,6 @@ class MainActivity : AppCompatActivity() ,WordAdapter.ItemClickListener{
             runOnUiThread { wordAdapter.notifyDataSetChanged() }// data 변경에 따른 화면 갱신 전체를 갱신하면 오래 걸림
 
         }.start()
-
     }
     private fun updateAddWord(){
         Thread{

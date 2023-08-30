@@ -1,19 +1,22 @@
 package fastcampus.part1.chapter8
 
+
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import fastcampus.part1.chapter8.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private val imageLoadLauncher =
@@ -85,17 +88,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkPermission() {
+        Log.d("MainActivity", "checkPermission")
         when {
             ContextCompat.checkSelfPermission( // 권한이 있을때
                 this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED -> { // 권한이 부여 되었는지 확인
                 loadImage() // 사진 이미지 불러오기
+                Log.d("MainActivity", "PERMISSION_GRANTED")
             }
             shouldShowRequestPermissionRationale( // 권한이 없을때
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
             ) -> {
                 showPermissionInfoDialog() //권한 요청 보여주기
+                Log.d("MainActivity", "READ_EXTERNAL_STORAGE")
             }
             else -> {
                 requestReadExternalStorage()
@@ -119,11 +125,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestReadExternalStorage() {
+        Log.d("MainActivity", "requestReadExternalStorage")
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             REQUEST_READ_EXTERNAL_STORAGE
         )
+        Log.d("MainActivity", "Manifest.permission.READ_EXTERNAL_STORAGE : " + Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     override fun onRequestPermissionsResult( // RequestPermission 확인 하는 것

@@ -58,19 +58,19 @@ class AddActivity : AppCompatActivity() {
         }
     }
 
-    private fun add(){
+    private fun add() {
         val text = binding.textInputEditText.text.toString()
         val mean = binding.meanTextInputEditText.text.toString()
-        val type = findViewById<Chip>(binding.typeChipGroup.checkedChipId).toString()
+        val type = findViewById<Chip>(binding.typeChipGroup.checkedChipId).text.toString()
         val word = Word(text, mean, type)
 
-        Thread{
+        Thread {
             AppDatabase.getInstance(this)?.wordDao()?.insert(word)
             runOnUiThread {
                 Toast.makeText(this, "저장을 완료했습니다.", Toast.LENGTH_SHORT).show()
             }
             val intent = Intent().putExtra("isUpdated", true)
-            setResult(RESULT_OK, intent)
+            setResult(RESULT_OK,intent)
             finish()
         }.start()
     }
