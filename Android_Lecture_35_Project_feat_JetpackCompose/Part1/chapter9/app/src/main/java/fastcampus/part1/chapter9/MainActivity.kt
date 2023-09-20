@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         binding.stopButton.setOnClickListener { mediaPlayerStop() }
     }
 
-    private fun mediaPlayerPlay(){
+    private fun mediaPlayerPlay() {
         val intent = Intent(this, MediaPlayerService::class.java)
             .apply { action = MEDIA_PLAYER_PLAY }
         startService(intent)
