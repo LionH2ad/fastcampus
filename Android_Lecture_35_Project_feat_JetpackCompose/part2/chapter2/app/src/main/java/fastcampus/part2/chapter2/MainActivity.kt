@@ -19,6 +19,8 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), OnTimerTickListener {
 
+    val Tag: String? = MainActivity::class.simpleName //MainActivity
+
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
     }
@@ -41,8 +43,9 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d(Tag, "onCreate() Test")
 
-        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
+        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp" // 절대 경로로 사용
         timer = Timer(this)
 
         binding.recordButton.setOnClickListener {
@@ -86,16 +89,13 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     private fun record() {
         when {
             ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.RECORD_AUDIO
+                this, Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED -> {
                 onRecord(true)
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.RECORD_AUDIO
-            ) -> {
+                this, Manifest.permission.RECORD_AUDIO) -> {
                 showPermissionRationalDialog()
             }
             else -> {
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
             try {
                 prepare()
             } catch (e: IOException) {
-                Log.e("APP", "prepare() failed $e")
+                Log.e(Tag, "prepare() failed $e")
             }
 
             start()
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
                 setDataSource(fileName)
                 prepare()
             } catch (e: IOException) {
-                Log.e("APP", "media player prepare fail $e")
+                Log.e(Tag, "media player prepare fail $e")
             }
 
             start()
@@ -207,29 +207,30 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     }
     private fun showPermissionRationalDialog() {
         AlertDialog.Builder(this)
-            .setMessage("녹음 권한을 켜주셔야지 앱을 정상적으로 사용할 수 있습니다.")
-            .setPositiveButton("권한 허용하기") { _, _ ->
+            .setMessage(R.string.recording_permission)
+            .setPositiveButton(R.string.permission_apply) { _, _ ->
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.RECORD_AUDIO),
                     REQUEST_RECORD_AUDIO_CODE
                 )
-            }.setNegativeButton("취소") { dialogInterface, _ -> dialogInterface.cancel() }
+            }.setNegativeButton(R.string.cancel) { dialogInterface, _ -> dialogInterface.cancel() }
             .show()
 
     }
 
     private fun showPermissionSettingDialog() {
         AlertDialog.Builder(this)
-            .setMessage("녹음 권한을 켜주셔야지 앱을 정상적으로 사용할 수 있습니다. 앱 설정 화면으로 진입하셔서 권한을 켜주세요.")
-            .setPositiveButton("권한 변경하러 가기") { _, _ ->
+            .setMessage(R.string.recording_permission_setting)
+            .setPositiveButton(R.string.permission_setting_apply) { _, _ ->
                 navigateToAppSetting()
-            }.setNegativeButton("취소") { dialogInterface, _ -> dialogInterface.cancel() }
+            }.setNegativeButton(R.string.cancel) { dialogInterface, _ -> dialogInterface.cancel() }
             .show()
 
     }
 
     private fun navigateToAppSetting() {
+        // 권한을 설정하기 위해 디테일 셋팅 화면으로 셋팅하며 uri 값을 넘겨 줍니다.
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             data = Uri.fromParts("package", packageName, null)
         }
@@ -250,10 +251,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
             onRecord(true)
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                )
-            ) {
+                    this, Manifest.permission.RECORD_AUDIO)) {
                 showPermissionRationalDialog()
             } else {
                 showPermissionSettingDialog()
