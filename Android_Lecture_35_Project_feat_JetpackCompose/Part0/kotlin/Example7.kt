@@ -1,4 +1,4 @@
-package com.example.kotlin
+package Android_Lecture_35_Project_feat_jetpackCompose.Part0.kotlin
 
 fun main(){
     val list = mutableListOf(1,2,3,4,5)

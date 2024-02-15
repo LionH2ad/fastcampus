@@ -1,4 +1,4 @@
-package com.example.kotlin
+package Android_Lecture_35_Project_feat_jetpackCompose.Part0.kotlin
 
 fun main(){
     /*for(int i =0;i<11;i++){
