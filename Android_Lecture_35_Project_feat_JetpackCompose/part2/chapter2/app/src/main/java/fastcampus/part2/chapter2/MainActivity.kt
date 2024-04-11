@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
     }
 
-    // 릴리즈 -> 녹음중 -> 릴리즈
-    // 릴리즈 -> 재생 -> 릴리즈
+    // 릴리즈 -> 녹음중(재생 불가) -> 릴리즈
+    // 릴리즈 -> 재생(녹음 불가) -> 릴리즈
     private enum class State {
         RELEASE, RECORDING, PLAYING
     }
@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
 
             }
         }
+        binding.playButton.isEnabled = false
+        binding.playButton.alpha = 0.3f
 
         binding.stopButton.setOnClickListener {
             when (state) {
@@ -146,7 +148,7 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
     }
 
     private fun stopRecoding() {
-        recorder?.apply {
+        recorder?.apply { // ? 를 넣어 주면서 record가 null 이면 괄호 안에 함수 실행x
             stop()
             release()
         }
@@ -205,6 +207,8 @@ class MainActivity : AppCompatActivity(), OnTimerTickListener {
         binding.recordButton.alpha = 1.0f
 
     }
+
+    // Rational 원리
     private fun showPermissionRationalDialog() {
         AlertDialog.Builder(this)
             .setMessage("녹음 권한을 켜주셔야지 앱을 정상적으로 사용할 수 있습니다.")

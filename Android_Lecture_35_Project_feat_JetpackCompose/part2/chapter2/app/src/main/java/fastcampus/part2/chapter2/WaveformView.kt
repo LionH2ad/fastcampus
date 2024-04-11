@@ -8,7 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 
-class WaveformView @JvmOverloads constructor(
+class WaveformView @JvmOverloads constructor( // Java에서 Overloads 한 것처럼 보이도록
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
