@@ -59,9 +59,12 @@ private fun startServer(){
         val outputStream = clientSocket.getOutputStream()
         val printWriter = PrintWriter(outputStream)
 
+        // HEADER
         printWriter.println("HTTP/1.1 200 OK")
         printWriter.println("Content-Type: text/html\r\n")
-        printWriter.println("<h1>Hello World</h1>")
+
+        // BODY
+        printWriter.println("{\"message\": \"Today is Sunny\"}")
         printWriter.println("\r\n")
         printWriter.flush()
         bufferedReader.close()
