@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">part2-chapter4</string>
+    <string name="star_count">starCount</string>
+    <string name="fork_count">forkCount</string>
 </resources>

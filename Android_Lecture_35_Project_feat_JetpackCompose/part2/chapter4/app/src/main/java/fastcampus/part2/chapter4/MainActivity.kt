@@ -53,16 +53,6 @@ class MainActivity : AppCompatActivity() {
                 300,
             )
         }
-
-        /*githubService.listRepos("LionH2ad").enqueue(object: Callback<List<Repo>>{
-            override fun onResponse(call: Call<List<Repo>>, response: Response<List<Repo>>) {
-                Log.e("MainActivity", response.body().toString())
-            }
-
-            override fun onFailure(call: Call<List<Repo>>, t: Throwable) {
-
-            }
-        })*/
     }
 
     private fun searchUser() {
