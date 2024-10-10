@@ -46,7 +46,7 @@ fun CoilEx() {
 
     // 스텝 4: AsyncImage를 이용해봅니다. model에 주소를 적으면 됩니다.
     AsyncImage(
-        model = "https://raw.githubusercontent.com/Fastcampus-Android-Lecture-Project-2023/part4-chapter3/main/part-chapter3-10/app/src/main/res/drawable-hdpi/wall.jpg",
+        model = "https://raw.githubusercontent.com/Fastcampus-Android-Lecture-Project-2023/part4-chapter3/main/part4-chapter3-10/app/src/main/res/drawable-hdpi/wall.jpg",
         contentDescription = "엔텔로프 캐년"
     )
 }
