@@ -36,14 +36,29 @@ class MainActivity : ComponentActivity() {
 fun SnackbarEx() {
     var counter by remember { mutableStateOf(0) }
 
-    // 단계 3: couroutineScope를 만듭시다.
+    // 단계 3: coroutineScope를 만듭시다.
     // `rememberCoroutineScope`를 사용합니다.
+    val coroutineScope = rememberCoroutineScope()
 
     // 단계 1: scaffoldState를 만들고 Scaffold에 설정합시다.
     // scaffoldState를 만들기 위해 `rememberScaffoldState`를 사용합니다.
-    Scaffold {
+
+    val scaffoldState = rememberScaffoldState()// remember와 스케폴드 스테이트를 만드는 것이 합쳐진 메서즈라고 볼 수 있다
+    Scaffold(scaffoldState = scaffoldState) {
         // 단계 2: "더하기" 버튼을 만들어 봅시다.
         // action에서 counter를 증가시킵시다.
+        Button(onClick = {
+            counter++
+            coroutineScope.launch{
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = "카운터는 ${counter}입니다.",
+                    actionLabel = "닫기",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }) {
+            Text("더하기")
+        }
 
         // 단계 4: 버튼의 onClick에서 `coroutineScope.launch`를
         // 사용합니다.
