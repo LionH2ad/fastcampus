@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     TopLevel()
+
                 }
             }
         }
@@ -35,15 +36,52 @@ class MainActivity : ComponentActivity() {
 fun TopLevel() {
     val (text, setText) = remember { mutableStateOf("") }
     val toDoList = remember { mutableStateListOf<ToDoData>() }
+    // MutableStateList가 추가, 삭제, 변경되었을 때만 UI 갱신
+    // 항목 하나의 값을 바꾸는 것보다 항목 자체를 바꾸는게
 
     // 단계 4: `onSubmit`, `onEdit`, `onToggle`, `onDelete`를
     // 만들어 `ToDo`에 연결합니다.
+    val onSubmit: (String) -> Unit = { text ->
+        val key = (toDoList.lastOrNull()?.key ?: 0) + 1
+        toDoList.add(ToDoData(key, text))
+        setText("")
+    }
+    val onToggle: (Int, Boolean) -> Unit = { key, checked ->
+        val i = toDoList.indexOfFirst { it.key == key }
+        //toDoList.set(i, toDoList.get(i).copy(done = checked))
+        toDoList[i] = toDoList[i].copy(done = checked)
+    }
+
+    val onDelete: (Int) -> Unit = { key ->
+        val i = toDoList.indexOfFirst { it.key == key }
+        toDoList.removeAt(i)
+    }
+
+    val onEdit: (Int, String) -> Unit = { key, text ->
+        val i = toDoList.indexOfFirst { it.key == key }
+        toDoList[i] = toDoList[i].copy(text = text)
+    }
 
     Scaffold {
         Column {
-            ToDoInput(text, setText, {})
+            ToDoInput(
+                text = text,
+                onTextChange = setText,
+                onSubmit = onSubmit
+            )
             // 단계 3: `LazyColumn`으로 `toDoList`를 표시합시다.
             // `key`를 `toDoData`의 `key`를 사용합니다.
+            LazyColumn {
+                items(toDoList, key = { it.key }) { toDoData ->
+                    //Text(toDoData.text)
+                    ToDo(
+                        toDoData = toDoData,
+                        onEdit = onEdit,
+                        onToggle = onToggle,
+                        onDelete = onDelete
+                    )
+                }
+            }
         }
     }
 }
@@ -66,7 +104,7 @@ fun ToDoInput(
         OutlinedTextField(
             value = text,
             onValueChange = onTextChange,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f) // weight 가 하나밖에 없는 경우 남은 공간 전체 차지
         )
         Spacer(modifier = Modifier.size(8.dp))
         Button(onClick = {
@@ -97,13 +135,94 @@ fun ToDo(
         modifier = Modifier.padding(4.dp),
         elevation = 8.dp
     ) {
-
         // 단계 1: `Row`를 만들고 `toDoData.text`를 출력하고
         // 완료를 체크하는 체크박스, 수정 버튼, 삭제 버튼을 만드세요.
+        /*Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = toDoData.text,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "완료"
+            )
+            Checkbox(
+                checked = toDoData.done,
+                onCheckedChange = { checked ->
+                    onToggle(toDoData.key, checked)
+                }
+            )
+            Button(onClick = {}) {
+                Text("수정")
+            }
+            Spacer(modifier = Modifier.size(4.dp))
+            Button(onClick = {}) {
+                Text("삭제")
+            }
+        }*/
 
         // 단계 2: `Crossfade`를 통해 `isEditing`을 따라 다른
         // UI를 보여줍니다. `OutlinedTextField`와 `Button을
         // 넣어봅시다.
+        Crossfade(targetState = isEditing) {
+            when (it) {
+                false -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            text = toDoData.text,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "완료"
+                        )
+                        Checkbox(
+                            checked = toDoData.done,
+                            onCheckedChange = { checked ->
+                                onToggle(toDoData.key, checked)
+                            }
+                        )
+                        Button(onClick = {
+                            isEditing = true
+                        }) {
+                            Text("수정")
+                        }
+                        Spacer(modifier = Modifier.size(4.dp))
+                        Button(onClick = {
+                            onDelete(toDoData.key)
+                        }) {
+                            Text("삭제")
+                        }
+                    }
+                }
+
+                true -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        var (newText, setNewText) = remember {
+                            mutableStateOf(toDoData.text)
+                        }
+                        OutlinedTextField(
+                            value = newText,
+                            onValueChange = setNewText,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(modifier = Modifier.size(4.dp))
+                        Button(onClick = {
+                            onEdit(toDoData.key, newText)
+                            isEditing = false
+                        }) {
+                            Text("완료")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
