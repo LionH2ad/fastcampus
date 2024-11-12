@@ -19,7 +19,8 @@ import kr.co.fastcampus.part4.chapter5_9.viewmodel.PokemonViewModel
 @Composable
 fun MainScreen(
     onPokemonClick: (String) -> Unit,
-    viewModel: PokemonViewModel
+    viewModel: PokemonViewModel = hiltViewModel()
+    // 네비게이션에 소속이 되어 있으면 viewModel() 이라고 할 수 없고 hiltViewModel() 사용
 ) {
     val items = viewModel.pokemonList.collectAsLazyPagingItems()
     LazyColumn {

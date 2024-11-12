@@ -28,6 +28,7 @@ class PokemonViewModel @Inject constructor(
         )
     )
 
+    // Pager를 사용하고 있고 config 와 를 pagingSourceFactory사용하고 있다
     private fun getPokemons(): Flow<PagingData<Response.Result>> = Pager(
         config = PagingConfig(
             pageSize = 20,
@@ -50,9 +51,11 @@ class PokemonViewModel @Inject constructor(
                         // 단계 2: `offset=20&limit=20` 형태의 주소에서
                         // `prevKey`와 `nextKey`를 만들어 전달하자.
                         return LoadResult.Page(
-                            data = pokemons.results,
-                            prevKey = null,
-                            nextKey = null
+                            data = pokemons.results, // 현재 페이지 데이터
+                            prevKey = pokemons.previous?.substringAfter("offset=")
+                                ?.substringBefore("&")?.toInt(), // 이전 페이지로 가기 위한 데이터
+                            nextKey = pokemons.next?.substringAfter("offset=")
+                                ?.substringBefore("&")?.toInt() // 다음 페이지로 가기 위한 데이터
                         )
                     } catch (e: Exception) {
                         Log.e("EEE", "error: $e")
@@ -62,7 +65,7 @@ class PokemonViewModel @Inject constructor(
                 }
             }
         }
-    ).flow
+    ).flow // flow 형태로 변경
 
     fun getPokemon(pokemonId: Int) {
         viewModelScope.launch {
